@@ -1,0 +1,173 @@
+{% extends 'index.html' %}
+
+{% block body %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+			  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+				<h1 class="h2">Daftar Obat</h1>
+				{% with errors = get_flashed_messages(category_filter=["error"]) %}
+					{% if errors %}
+					<div class="alert-message block-message error">
+					  <a class="close" href="#">×</a>
+					  <ul>
+						{%- for msg in errors %}
+						<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						  <strong>{{msg}}</strong>
+						  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+						{% endfor -%}
+					  </ul>
+					</div>
+					{% endif %}
+				{% endwith %}
+			  </div>
+				<div id="Loader">
+				<div class="d-flex justify-content-center">
+				  <div class="spinner-border text-primary" style="width: 10rem; height: 10rem;" role="status">
+					<span class="visually-hidden">Loading...</span>
+				  </div>
+				</div>
+				</div>
+			  <div class="container">
+			  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#obatModal" 
+			  data-bs-whatever="@mdo">+Tambah Obat</button>
+				<div class="modal fade" id="obatModal" tabindex="-1" aria-labelledby="obatModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title" id="obatModalLabel">Tambahkan Obat</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					  </div>
+					  <div class="modal-body">
+						<form action ="{{url_for('tambahobat')}}" id="idObat" method="POST">
+						  <div class="mb-3">
+							<label for="recipient-name" class="col-form-label">Nama Obat :</label>
+							<input type="text" name="namaObat" class="form-control" id="recipient-name">
+						  </div>
+						  <div class="mb-3">
+							<label for="validationObat" class="form-label">Jenis Obat</label>
+							<select class="form-select" id="validationObat" name="jenisObat" required>
+							  <option selected disabled value="">Pilih...</option>
+							  <option value="Obat Cair">Obat Cair</option>
+							  <option value="Tablet">Tablet</option>
+							  <option value="Kapsul">Kapsul</option>
+							  <option value="Obat Oles">Obat Oles</option>
+							  <option value="Obat Tetes">Obat Tetes</option>
+							</select>
+							</div>
+						  <div class="mb-3">
+							<label for="recipient-name" class="col-form-label">Harga Beli:</label>
+							<input type="number" class="form-control" name="harga_beli" id="recipient-name">
+						  </div>
+						  <div class="mb-3">
+							<label for="recipient-name" class="col-form-label">Harga Jual:</label>
+							<input type="number" class="form-control" name="harga_jual" id="recipient-name">
+						  </div>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+						<button type="submit" class="btn btn-primary">Input</button>
+					  </div>
+					  </form>
+					</div>
+				  </div>
+				</div>
+				<br /><br />
+				  <div class="card">
+				  <div class="card-header">
+				  Table Obat
+				  </div>
+				  <div class="card-body">
+						<table class="table table-bordered table-sm">
+						  <thead class="table table-dark">
+							<tr>
+							  <th scope="col">No.</th>
+							  <th scope="col">Nama Obat</th>
+							  <th scope="col">Jenis Obat</th>
+							  <th scope="col">Harga Beli</th>
+							  <th scope="col">Harga Jual</th>
+							  <th scope="col">Aksi</th>
+							</tr>
+						  </thead>
+						  <tbody>
+						  {% for dt in datao %}
+							<tr>
+							  <th scope="row">{{loop.index}}</th>
+							  <td>{{dt.namaObat}}</td>
+							  <td>{{dt.jenisObat}}</td>
+							  <td>{{dt.harga_beli}}</td>
+							  <td>{{dt.harga_jual}}</td>
+							  <td>
+								 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#obatModal1{{dt.id}}" 
+								 data-bs-whatever="@mdo">Edit</button>
+								 <div class="modal fade" id="obatModal1{{dt.id}}" tabindex="-1" aria-labelledby="obatModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+									<div class="modal-content">
+									  <div class="modal-header">
+										<h5 class="modal-title" id="batModalLabel">Edit Obat</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									  </div>
+									  <div class="modal-body">
+										<form action ="/editobat/{{dt.id}}" id="editobat" method="POST">
+										  <div class="mb-3">
+											<label for="recipient-name" class="col-form-label">Nama Obat:</label>
+											<input type="text" name="namaObat" value="{{dt.namaObat}}" class="form-control" id="recipient-name">
+										  </div>
+										  <div class="mb-3">
+											<label for="validationObat" class="form-label">Jenis Obat</label>
+											<select class="form-select" id="validationObat" name="jenisObat" required>
+											  <option selected disabled value="">Pilih...</option>
+											  <option value="Obat Cair">Obat Cair</option>
+											  <option value="Tablet">Tablet</option>
+											  <option value="Kapsul">Kapsul</option>
+											  <option value="Obat Oles">Obat Oles</option>
+											  <option value="Obat Tetes">Obat Tetes</option>
+											</select>
+											</div>
+										  <div class="mb-3">
+											<label for="recipient-name" class="col-form-label">Harga Beli:</label>
+											<input type="number" value="{{dt.harga_beli}}" class="form-control" name="harga_beli" id="recipient-name">
+										  </div>
+										  <div class="mb-3">
+											<label for="recipient-name" class="col-form-label">Harga Jual:</label>
+											<input type="number" value="{{dt.harga_jual}}" class="form-control" name="harga_jual" id="recipient-name">
+										  </div>
+										  <input type="hidden" value="{{dt.id}}" id="eBrg">
+									  </div>
+									  <div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+										<button type="submit" class="btn btn-primary">Update</button>
+									  </div>
+									  </form>
+									</div>
+								  </div>
+								</div>
+								<button class="btn btn-sm btn-danger"data-bs-toggle="modal" data-bs-target="#obatModal2{{dt.id}}" 
+								 data-bs-whatever="@mdo">Hapus</button>
+								 <div class="modal fade" id="obatModal2{{dt.id}}" tabindex="-1" aria-labelledby="obatModalLabel" aria-hidden="true">
+								  <div class="modal-dialog modal-dialog-centered">
+									<div class="modal-content">
+									  <div class="modal-header">
+										<h5 class="modal-title" id="obatModalLabel">Konfirmasi</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									  </div>
+									  <div class="modal-body">
+										<h5>Apakah anda ingin menghapus data ini?</h5>
+									  </div>		
+									  <div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+										<a href="/hapusobat/{{dt.id}}" class="btn btn-danger">Ya, Hapus</a>
+									  </div>
+									  </form>
+									</div>
+								  </div>
+								</div>
+							  </td>
+							</tr>
+						  {% endfor %}
+						  </tbody>
+						</table>
+				  </div>
+				</div>
+			  </div>
+{% endblock %}
